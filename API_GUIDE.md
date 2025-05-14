@@ -76,9 +76,10 @@ Stream audio data and receive transcription results in real time.
 {
   "model": "your_model_name",
   "language": "en",
-  "audio_ndarray": "<base64-encoded ndarray>"
+  "audio_ndarray": "<base64-encoded float32 numpy array>"
 }
 ```
+> **Note:** `audio_ndarray` must be a base64-encoded byte stream of a float32 numpy array. Directly sending base64-encoded audio files (e.g., wav/mp3) or other formats is **not supported**. The backend expects a mono (single channel), 16kHz, float32 numpy array.
 
 - **Server → Client:**
 ```json
@@ -90,25 +91,68 @@ Stream audio data and receive transcription results in real time.
 }
 ```
 
-#### **Python Example (websockets)**
+#### **How to Prepare Data for audio_ndarray**
+
+##### 1. From an audio file (e.g., wav)
+```python
+import numpy as np
+import base64
+from scipy.io import wavfile
+
+rate, data = wavfile.read("your_audio.wav")
+if data.dtype != np.float32:
+    data = data.astype(np.float32) / np.iinfo(data.dtype).max
+# If stereo, convert to mono
+if len(data.shape) > 1:
+    data = data.mean(axis=1)
+audio_ndarray_b64 = base64.b64encode(data.tobytes()).decode("utf-8")
+```
+
+##### 2. From microphone (streaming)
+```python
+import sounddevice as sd
+import numpy as np
+import base64
+
+# Example callback for streaming
+
+def callback(indata, frames, time, status):
+    mono = indata.mean(axis=1) if indata.shape[1] > 1 else indata[:,0]
+    audio_b64 = base64.b64encode(mono.astype(np.float32).tobytes()).decode("utf-8")
+    # Send audio_b64 via WebSocket
+
+with sd.InputStream(callback=callback, channels=1, samplerate=16000, dtype='float32'):
+    ... # Run your event loop
+```
+
+#### **Cross-Project Usage Example**
 ```python
 import asyncio
 import websockets
 import json
 
-async def transcribe_stream():
+async def transcribe_stream(audio_ndarray_b64):
     uri = "ws://localhost:8000/transcribe/stream"
     async with websockets.connect(uri) as ws:
         await ws.send(json.dumps({
             "model": "your_model_name",
             "language": "en",
-            "audio_ndarray": "<base64-encoded ndarray>"
+            "audio_ndarray": audio_ndarray_b64
         }))
-        response = await ws.recv()
-        print(response)
+        while True:
+            response = await ws.recv()
+            print(response)
 
-asyncio.run(transcribe_stream())
+# audio_ndarray_b64: see data preparation above
+# asyncio.run(transcribe_stream(audio_ndarray_b64))
 ```
+
+#### **Common Errors**
+- If `audio_ndarray` is not a base64-encoded float32 numpy byte stream, the API will return an error or invalid result.
+- Example error:
+  ```json
+  {"error": "cannot reshape array of size ..."}
+  ```
 
 ---
 
@@ -123,6 +167,12 @@ WebSocket errors are sent as JSON messages with an `error` field.
 ---
 
 ## FAQ & Notes
+- **Q: Can I send a base64-encoded wav/mp3 file directly?**
+  - A: No. You must decode the audio to a float32 numpy array, then base64 encode the bytes.
+- **Q: Does it support multi-channel audio?**
+  - A: Please convert to mono before sending.
+- **Q: What sample rate should I use?**
+  - A: 16kHz is recommended for best compatibility.
 - Supported audio formats depend on the backend model.
 - For best results, use clear audio and specify the correct language.
 - If you need to load a new model, ensure it is available in the backend.

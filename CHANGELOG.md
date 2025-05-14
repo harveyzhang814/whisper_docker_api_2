@@ -19,3 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Project initialized
 - Added README.md with project overview, features, API design, and usage instructions 
+
+## [Unreleased] - 2024-06-11
+
+### Changed
+- Refactored `API_GUIDE.md` to clarify best usage practices, including:
+  - Improved instructions for preparing and sending audio data.
+  - Enhanced error handling documentation.
+  - Added more detailed examples for both HTTP and WebSocket usage.
+  - Updated FAQ and notes for common user questions.
