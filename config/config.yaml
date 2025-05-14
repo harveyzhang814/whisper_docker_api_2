@@ -1,0 +1,18 @@
+api:
+  host: 0.0.0.0
+  port: 8000
+  root_path: /
+  domain: whisper.local
+  log_level: info
+
+models:
+  - name: base
+    device: cpu
+  - name: small
+    device: cpu
+  # - name: medium
+  #   device: cpu
+
+# 可扩展参数
+# concurrency: 2
+# max_upload_size_mb: 100 
