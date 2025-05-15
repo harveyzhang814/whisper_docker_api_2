@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Initial project structure planning
 - Added detailed README documentation
 - Planned support for multi-model, multi-format, and streaming Whisper API
+- 新增音频分片和转 base64 工具函数（split_audio, audio_to_base64），并在测试脚本中实现复用，提升了流式接口测试的可维护性和复用性。
 
 ## [0.1.0] - 2024-06-1
 ### Added
