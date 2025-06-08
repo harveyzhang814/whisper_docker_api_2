@@ -1,9 +1,6 @@
 """
-Test script for real-time microphone streaming with stream_transcribe,
-and save the recorded audio to a WAV file.
-
-This script captures audio from the microphone in real time, sends each chunk to the streaming API,
-prints each response, and finally saves the concatenated audio to sample/mic_recorded.wav.
+This test script verifies the microphone streaming transcription client utility with saving functionality.
+It captures audio from the microphone, streams it to the API, saves the results, and prints them.
 
 Dependencies: sounddevice, numpy, scipy, app.utils.api_client
 

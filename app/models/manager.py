@@ -1,3 +1,7 @@
+"""
+This module manages the loading and retrieval of transcription models.
+It reads model configurations, loads models into memory, and provides access to them for API endpoints.
+"""
 import os
 import yaml
 from typing import Dict, Any

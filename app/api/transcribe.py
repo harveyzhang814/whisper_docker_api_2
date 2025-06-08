@@ -1,3 +1,7 @@
+"""
+This module implements the transcription API endpoints for both HTTP and WebSocket.
+It handles audio input in various formats and returns transcription results using the loaded models.
+"""
 from fastapi import APIRouter, File, UploadFile, Form, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse, JSONResponse, PlainTextResponse
 from typing import Optional

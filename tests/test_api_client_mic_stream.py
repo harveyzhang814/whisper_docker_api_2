@@ -1,8 +1,6 @@
 """
-Test script for real-time microphone streaming with stream_transcribe.
-
-This script captures audio from the microphone in real time, sends each chunk to the streaming API,
-and prints each response as it arrives. At the end, it outputs the concatenated text.
+This test script verifies the microphone streaming transcription client utility.
+It captures audio from the microphone, streams it to the API, and prints the results.
 
 Dependencies: sounddevice, numpy, app.utils.api_client, app.utils.audio
 

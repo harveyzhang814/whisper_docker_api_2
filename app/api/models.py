@@ -1,3 +1,7 @@
+"""
+This module defines the API endpoint for listing available transcription models.
+It interacts with the ModelManager to provide model information to clients.
+"""
 from fastapi import APIRouter
 from app.models.manager import ModelManager
 from typing import Optional

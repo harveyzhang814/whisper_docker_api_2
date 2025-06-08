@@ -1,3 +1,7 @@
+"""
+This file initializes the FastAPI application, loads model configurations, and registers API routers.
+It serves as the main entry point for the Whisper Docker API service.
+"""
 import os
 from fastapi import FastAPI
 from app.api import transcribe, models, health

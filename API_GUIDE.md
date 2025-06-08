@@ -180,4 +180,77 @@ WebSocket errors are sent as JSON messages with an `error` field.
 ---
 
 ## Contact & Links
-- For more information, see the project README or contact the maintainer. 
+- For more information, see the project README or contact the maintainer.
+
+---
+
+## Python Client Utilities
+
+This project provides convenient Python utility functions for calling the transcription APIs directly with numpy audio arrays. These are located in `app/utils/api_client.py`.
+
+### 1. `standard_transcribe`
+Transcribe audio using the standard HTTP API (`/transcribe`).
+
+**Function Signature:**
+```python
+from app.utils.api_client import standard_transcribe
+result = standard_transcribe(audio, model="base", language=None, output_format="json", **kwargs)
+```
+
+**Parameters:**
+- `audio` (`np.ndarray`, required): 1D float32 numpy array, 16kHz, mono.
+- `model` (`str`, optional): Model name (default: "base").
+- `language` (`str`, optional): Language code (e.g., 'en', 'zh').
+- `output_format` (`str`, optional): Output format ('json', 'text', etc.).
+- `**kwargs`: Any additional parameters supported by the API.
+
+**Returns:**
+- `dict`: API response (parsed JSON or error info).
+
+**Example:**
+```python
+import numpy as np
+from app.utils.api_client import standard_transcribe
+# audio: your 16kHz mono float32 numpy array
+data = standard_transcribe(audio, model="small", language="en")
+print(data)
+```
+
+---
+
+### 2. `stream_transcribe`
+Transcribe audio using the streaming WebSocket API (`/transcribe/stream`).
+
+**Function Signature:**
+```python
+from app.utils.api_client import stream_transcribe
+results = stream_transcribe(audio, model="base", language=None, chunk_seconds=1, **kwargs)
+```
+
+**Parameters:**
+- `audio` (`np.ndarray`, required): 1D float32 numpy array, 16kHz, mono.
+- `model` (`str`, optional): Model name (default: "base").
+- `language` (`str`, optional): Language code.
+- `chunk_seconds` (`int`, optional): Duration (seconds) of each audio chunk (default: 1).
+- `**kwargs`: Any additional parameters supported by the API.
+
+**Returns:**
+- `List[dict]`: List of server responses for each chunk.
+
+**Example:**
+```python
+import numpy as np
+from app.utils.api_client import stream_transcribe
+# audio: your 16kHz mono float32 numpy array
+results = stream_transcribe(audio, model="small", language="en", chunk_seconds=1)
+for resp in results:
+    print(resp)
+```
+
+---
+
+**Notes:**
+- Both functions require the input audio to be a 16kHz, mono, float32 numpy array. Use the provided audio utilities to convert files if needed.
+- `stream_transcribe` splits the audio and sends each chunk sequentially, simulating real-time streaming.
+- You can pass any additional API parameters as keyword arguments.
+- See `app/utils/api_client.py` for full details and docstrings. 
